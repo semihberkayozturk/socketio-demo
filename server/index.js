@@ -10,13 +10,15 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../app/index.html"))
 });
 
+app.use(express.static(path.join(__dirname, "../app")));
+
 io.on("connection", (socket) => {
     socket.on("chat message", (msg) => {
-        io.emit("chat message", `${socket.id.substr(0,2)}: ${msg}`)
+        io.emit("chat message", `${socket.id.substring(0,2)}: ${msg}`)
     })
-    socket.broadcast.emit("chat message", "A user joined the chat!")
+    socket.broadcast.emit("chat message", `${socket.id.substring(0,2)} has joined the chat!`)
     socket.on("disconnect", () => {
-        socket.broadcast.emit("chat message", "A user left the chat!")
+        socket.broadcast.emit("chat message", `${socket.id.substring(0,2)} has left the chat!`)
     })
 });
 
